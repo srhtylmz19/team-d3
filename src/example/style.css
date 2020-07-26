@@ -1,0 +1,16 @@
+.container {
+    height: 75vh;
+    width: 100%;
+    text-align: center;
+    background-color: red;
+}
+
+.line {
+    fill: none;
+    stroke: steelblue;
+    stroke-width: 2px;
+}
+
+.area {
+    fill: lightsteelblue;
+}
