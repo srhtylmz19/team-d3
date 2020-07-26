@@ -1,5 +1,5 @@
 import React, {Component, useEffect, useState} from 'react';
-import './Style.css'
+import './style.css'
 import {select, selectAll} from 'd3-selection'
 import {scaleTime, scaleLinear} from 'd3-scale'
 import {max, extent} from 'd3-array'
