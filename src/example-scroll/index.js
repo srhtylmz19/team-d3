@@ -65,24 +65,25 @@ class ScrollAbleChart extends React.Component {
     }
 
     componentDidMount() {
-        var x = scaleTime()
+        const x = scaleTime()
             .domain(extent(data, function (d) {
                 return d.date;
             }))
             .range([0, width]);
 
-        var y = scaleLinear()
+        const y = scaleLinear()
             .domain(extent(data, function (d) {
                 return d.value;
             }))
             .range([height, 0]);
 
-        var lineSecond = d3.line()
+        const lineSecond = d3.area()
             .x(d => x(d.date))
-            .y(d => y(d.value));
+            .y0(height)
+            .y1(d => y(d.value));
 
 
-        var zoomSecond = zoom().on("zoom", function () {
+        const zoomSecond = zoom().on("zoom", function () {
             if (d3.event.type === "zoom") return zoomEvent()
 
         })
@@ -91,8 +92,7 @@ class ScrollAbleChart extends React.Component {
             console.log('zoom event func not working !')
 
            // console.log(d3.event.transform)
-            svg.select(".x.axis")
-                .call(xAxis);
+            svg.select(".x.axis").call(xAxis);
 
             svg.select(".y.axis").call(yAxis);
             svg.select(".x.grid")
@@ -123,19 +123,18 @@ class ScrollAbleChart extends React.Component {
             .attr("class", "plot");
 
 
-        var make_x_axis =() => { return axisBottom(x).ticks(5);};
-        var make_y_axis =() => { return axisLeft(y).ticks(5);};
+        const make_x_axis =() => { return axisBottom(x).ticks(5);};
+        const make_y_axis =() => { return axisLeft(y).ticks(5);};
 
 
-        var xAxis = axisBottom(x).ticks(5);
+        const xAxis = axisBottom(x).ticks(5);
 
         svg.append("svg:g")
             .attr("class", "x axis")
             .attr("transform", "translate(0, " + height + ")")
             .call(xAxis);
 
-        var yAxis = axisLeft(y)
-            .ticks(5);
+        const yAxis = axisLeft(y).ticks(5);
 
         svg.append("g")
             .attr("class", "y axis")
@@ -155,7 +154,7 @@ class ScrollAbleChart extends React.Component {
                 .tickFormat(""));
 
 
-        var clip = svg.append("svg:clipPath")
+        const clip = svg.append("svg:clipPath")
             .attr("id", "clip")
             .append("svg:rect")
             .attr("x", 0)
@@ -163,7 +162,7 @@ class ScrollAbleChart extends React.Component {
             .attr("width", width)
             .attr("height", height);
 
-        var chartBody = svg.append("g")
+        const chartBody = svg.append("g")
             .attr("clip-path", "url(#clip)");
 
 
