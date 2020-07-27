@@ -110,7 +110,8 @@ class ScrollAbleChart extends React.Component {
         }
 
 
-        const svg = select('#chart').append("svg:svg")
+
+        const svg = select(this.containerRef.current).append("svg:svg")
             .attr('width', width + margin.left + margin.right)
             .attr('height', height + margin.top + margin.bottom)
             .append("svg:g")
