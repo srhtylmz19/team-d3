@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^7.1.2",
     "d3": "^5.16.0",
     "d3-array": "^2.4.0",
+    "d3-line": "^0.0.1",
     "d3-scale": "^3.2.1",
     "d3-selection": "^1.4.2",
     "d3-time-format": "^2.2.3",
@@ -35,5 +36,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "d3-axis": "^1.0.12",
+    "d3-zoom": "^1.8.3"
   }
 }
