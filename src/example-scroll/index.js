@@ -89,22 +89,22 @@ class ScrollAbleChart extends React.Component {
         })
 
         const zoomEvent = () => {
-            // not working
+
+           // console.log(d3.event.transform)
             svg.select(".x.axis").call(xAxis);
             svg.select(".y.axis").call(yAxis);
-
-            svg.select(".x.grid").call(make_x_axis()
-                .tickSize(-height, 0, 0)
-                .tickFormat("")
-            );
-
-            svg.select(".y.grid").call(make_y_axis()
-                .tickSize(-width, 0, 0)
-                .tickFormat(""));
-
-
-            svg.select(".line").attr("class", "line")
+            svg.select(".x.grid")
+                .call(make_x_axis()
+                    .tickSize(-height, 0, 0)
+                    .tickFormat(""));
+            svg.select(".y.grid")
+                .call(make_y_axis()
+                    .tickSize(-width, 0, 0)
+                    .tickFormat(""));
+            svg.select(".line")
+                .attr("class", "line")
                 .attr("d", lineSecond);
+
         }
 
 
@@ -121,7 +121,7 @@ class ScrollAbleChart extends React.Component {
             .attr("class", "plot");
 
 
-        var make_x_axis =() => { return axisBottom(y).ticks(5);};
+        var make_x_axis =() => { return axisBottom(x).ticks(5);};
         var make_y_axis =() => { return axisLeft(y).ticks(5);};
 
 
