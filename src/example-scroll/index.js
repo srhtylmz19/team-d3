@@ -3,7 +3,6 @@ import './style.css'
 import {select} from 'd3-selection'
 import {scaleTime, scaleLinear} from 'd3-scale'
 import {extent} from 'd3-array'
-
 import {zoom} from 'd3-zoom'
 import {
     axisBottom,
@@ -83,15 +82,18 @@ class ScrollAbleChart extends React.Component {
             .y(d => y(d.value));
 
 
-        var zoomSecond = d3.zoom().on("zoom", function () {
+        var zoomSecond = zoom().on("zoom", function () {
             if (d3.event.type === "zoom") return zoomEvent()
 
         })
 
         const zoomEvent = () => {
+            console.log('zoom event func not working !')
 
            // console.log(d3.event.transform)
-            svg.select(".x.axis").call(xAxis);
+            svg.select(".x.axis")
+                .call(xAxis);
+
             svg.select(".y.axis").call(yAxis);
             svg.select(".x.grid")
                 .call(make_x_axis()
