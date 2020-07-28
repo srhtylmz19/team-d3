@@ -3,17 +3,16 @@
 
 import React from 'react';
 import './style.css'
-import {select} from 'd3-selection'
+import {select, selectAll} from 'd3-selection'
 import {scaleTime, scaleLinear} from 'd3-scale'
 import {extent} from 'd3-array'
-import {zoom} from 'd3-zoom'
 import {
     axisBottom,
-    axisLeft
+    axisRight
 } from 'd3-axis'
 import * as d3 from 'd3'
 import {timeFormat} from "d3";
-
+import moment from 'moment'
 
 const margin = {
     top: 70,
@@ -22,7 +21,7 @@ const margin = {
     left: 70
 };
 const width = window.innerWidth - margin.left - margin.right;
-const height = window.innerHeight / 1.2 - margin.top - margin.bottom;
+const height = window.innerHeight - margin.top - margin.bottom;
 const data = [
     {
         date: 1595600571000,
@@ -80,8 +79,15 @@ class ScrollAbleChart extends React.Component {
             .domain(extent(data, function (d) {
                 return d.value;
             }))
+            .range([height, height / 4])
+
+        const yValueToShow = scaleLinear()
+            .domain(extent(data, function (d) {
+                return d.value;
+            }))
             .range([height, 0])
 
+        const yValueToShowCopy = yValueToShow.copy()
 
 
         const yCopy = y.copy();
@@ -92,9 +98,43 @@ class ScrollAbleChart extends React.Component {
             .y1(d => y(d.value))
 
 
-        const zoomSecond = zoom().on("zoom", function () {
-            if (d3.event.type === "zoom" || d3.event.type === "wheel") return zoomEvent()
-        })
+        const zoomEvent = () => {
+            const t = d3.event.transform;
+
+            //if (moment(t.rescaleX(x).domain()[1]) >= moment(1595600595000)) return; // will be updated with last data
+
+
+            x.domain(t.rescaleX(xCopy).domain());
+            xValueToShow.domain(t.rescaleX(xValueToShowCopy).domain())
+
+
+            //y.domain(t.rescaleY(yCopy).domain());
+
+            svg.select(".x.axis").call(xValueAxis);
+
+            //svg.select(".y.axis").call(yAxis);
+
+
+            svg.select(".x.grid")
+                .call(make_x_axis()
+                    .tickSize(-height, 0, 0)
+                    .tickFormat(""));
+
+            svg.select(".y.grid")
+                .call(make_y_axis()
+                    .tickSize(-width, 0, 0)
+                    .tickFormat(""));
+
+
+            svg.select(".line")
+                .attr("class", "line")
+                .attr("d", lineSecond);
+
+        }
+
+        const zoom = d3.zoom()
+            .scaleExtent([0.0001, 10])
+            .on("zoom", zoomEvent);
 
 
         const svg = select(this.containerRef.current).append("svg:svg")
@@ -102,7 +142,15 @@ class ScrollAbleChart extends React.Component {
             .attr('height', height + margin.top + margin.bottom)
             .append("svg:g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-            .call(zoomSecond)
+            .attr("pointer-events", "all")
+            .call(zoom)
+
+
+        // .call(zoomSecond)
+        // .on("wheel.zoom", function () {
+        //     console.log('wheel.zoom func');
+        //     console.log(d3.event)
+        // })
 
         svg.append("svg:rect")
             .attr("width", width)
@@ -111,15 +159,15 @@ class ScrollAbleChart extends React.Component {
 
 
         const make_x_axis = () => {
-            return axisBottom(xValueToShow).ticks(15);
+            return axisBottom(xValueToShow).ticks(25);
         };
         const make_y_axis = () => {
-            return axisLeft(y).ticks(15);
+            return axisRight(yValueToShow).ticks(25);
         };
 
 
-        //const xAxis = axisBottom(x).ticks(15);
-        const xValueAxis = axisBottom(xValueToShow).ticks(15);
+        //const xAxis = axisBottom(x).ticks(25);
+        const xValueAxis = axisBottom(xValueToShow).ticks(25);
 
         // tarih = alt
         svg.append("svg:g")
@@ -129,15 +177,12 @@ class ScrollAbleChart extends React.Component {
                 return timeFormat("%H:%M:%S")(d)
             }));
 
-        const yAxis = axisLeft(y).ticks(15);
+        const yAxis = axisRight(yValueToShow).ticks(25);
 
         // deger = sol
         svg.append("g")
             .attr("class", "y axis")
-            .call(yAxis.tickFormat(function (d) {
-                if (d === 0) return 'must stop'; // No label for '0'
-                return d;
-            }));
+            .call(yAxis.tickSize(width));
 
 
         svg.append("g")
@@ -147,11 +192,27 @@ class ScrollAbleChart extends React.Component {
                 .tickSize(-height, 0, 0)
                 .tickFormat(""));
 
-        svg.append("g")
-            .attr("class", "y grid")
-            .call(make_y_axis()
-                .tickSize(-width, 0, 0)
-                .tickFormat(""));
+        // var ticks = selectAll(".x.grid .tick");
+        //
+        // console.log(ticks)
+        // ticks.attr("class", function (d, i) {
+        //     console.log(d, i)
+        //         if (i === 5) {
+        //             console.log('5 inci')
+        //             return "active"
+        //         }else {
+        //             return "normal"
+        //         }
+        //
+        // });
+
+        //console.log('ticks', ticks)
+
+        // svg.append("g")
+        //     .attr("class", "y grid")
+        //     .call(make_y_axis()
+        //         .tickSize(-width, 0, 0)
+        //         .tickFormat(""));
 
 
         const clip = svg.append("svg:clipPath")
@@ -170,38 +231,6 @@ class ScrollAbleChart extends React.Component {
             .datum(data)
             .attr("class", "line")
             .attr("d", lineSecond);
-
-        const zoomEvent = () => {
-            const t = d3.event.transform;
-
-            console.log(t.rescaleY(yCopy).domain()[0])
-            if (t.rescaleY(yCopy).domain()[0] <= 0) return
-
-
-
-
-            x.domain(t.rescaleX(xCopy).domain());
-            xValueToShow.domain(t.rescaleX(xValueToShowCopy).domain())
-            y.domain(t.rescaleY(yCopy).domain());
-
-
-            svg.select(".x.axis").call(xValueAxis);
-            svg.select(".y.axis").call(yAxis);
-            svg.select(".x.grid")
-                .call(make_x_axis()
-                    .tickSize(-height, 0, 0)
-                    .tickFormat(""));
-            svg.select(".y.grid")
-                .call(make_y_axis()
-                    .tickSize(-width, 0, 0)
-                    .tickFormat(""));
-
-
-            svg.select(".line")
-                .attr("class", "line")
-                .attr("d", lineSecond);
-
-        }
 
 
     }
