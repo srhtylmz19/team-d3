@@ -18,15 +18,17 @@ body {
 }
 .axis path, .axis line {
     fill: none;
-    stroke: #000;
     shape-rendering: crispEdges;
 }
-.x.axis path {
-    display: none;
-}
-.line {
-    fill: lightsteelblue;
-    stroke: steelblue;
-    stroke-width: 1.5px;
 
+.tick line {
+    stroke: rgba(105,105,105,.5);
+}
+
+
+
+.line {
+    border-bottom: 0;
+    stroke-width: 1px;
+    fill: rgba(70,130,180,.5);
 }

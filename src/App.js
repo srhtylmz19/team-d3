@@ -1,9 +1,8 @@
 import React from 'react';
-import ScrollAbleChart from "./example-scroll";
-
+import Chart from './example-scroll/index'
 function App() {
   return (
-    <ScrollAbleChart/>
+    <Chart/>
   );
 }
 

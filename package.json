@@ -39,6 +39,7 @@
   },
   "devDependencies": {
     "d3-axis": "^1.0.12",
+    "d3-drag": "^1.2.5",
     "d3-zoom": "^1.8.3"
   }
 }
